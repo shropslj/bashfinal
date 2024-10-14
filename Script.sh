@@ -28,17 +28,9 @@ regex=""
 # Function to concatenate files
 concatenate () {
     # Prompt user for input without $
-    if [[ -z "$file1" ]]; then
         read -p "Enter first file: " file1
-    fi
-
-    if [[ -z "$file2" ]]; then
         read -p "Enter second file: " file2
-    fi
-
-    if [[ -z "$output_file" ]]; then
         read -p "Enter output file: " output_file
-    fi
 
     # Check if both input files exist
     if [[ -f "$file1" && -f "$file2" ]]; then
