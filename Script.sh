@@ -28,7 +28,11 @@ concatenate () {
     # Prompt user for input without $
     read -p "Enter first file: " file1
     read -p "Enter second file: " file2
-    read -p "Enter a name for concatenated file: " output_file
+    read -p "Enter output file: " output_file
+
+if [ -!e "$output_file" ]; then
+    touch $output_file
+fi
 
     # Check if both files exist
     if [[ -f "$file1" && -f "$file2" ]]; then
