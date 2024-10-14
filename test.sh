@@ -9,6 +9,8 @@ function display_usage () {
     echo "-r 'regex'                           enter a regular expression to filter for"
     echo "-h                                   display help information"
     echo ""
+    echo "Example: "
+    echo "./script.sh -cr file1.txt file2.txt output.txt "regexpattern""
     exit 1
 }
 
@@ -64,7 +66,7 @@ concatenate () {
 }
 
 # Process options
-while getopts ":hc:r:" opt; do 
+while getopts ":hcr:" opt; do 
     case $opt in
         # Option to display help
         h)
