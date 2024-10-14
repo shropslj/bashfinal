@@ -53,11 +53,11 @@ concatenate () {
             grep -E "$regex" "$file1" > "$output_file"
             grep -E "$regex" "$file2" >> "$output_file"
         else
-            # If no regex, concatenate files directly
+            # If no regex
             cat "$file1" "$file2" > "$output_file"
         fi
         
-        echo "Concatenated file has been created: $output_file"
+        echo "Output file has been created: $output_file"
     else
         echo "One or both of the input files do not exist. Please try again."
     fi
