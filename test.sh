@@ -2,19 +2,17 @@
 
 # Function to display help/usage information
 function display_usage () {
-    echo "Usage: enter -cr for concatenator and regex filtering; file1 file2 output_file"
+    echo "Usage: enter -c for concatenator; file1 file2 output_file"
     echo ""
     echo "Options:"
-    echo "-c                          Concatenate files. Use with -r for regex filtering."
-    echo "-r 'regex'                  Enter a regular expression to filter lines."
-    echo "-h                          Display help information."
+    echo "-c file1.txt file2.txt output_file    to concatenate. Remember to include the file extension"
+    echo "-r 'regex'                           enter a regular expression to filter for"
+    echo "-h                                   display help information"
     echo ""
-    echo "Example:"
-    echo "./Script.sh -cr file1.txt file2.txt output.txt '^pattern'"
     exit 1
 }
 
-# If no arguments are passed
+# If no arguments
 if [ $# -eq 0 ]; then
     echo "Error: Missing Arguments"
     display_usage
@@ -29,6 +27,19 @@ regex=""
 
 # Function to concatenate files
 concatenate () {
+    # Prompt user for input if not provided
+    if [[ -z "$file1" ]]; then
+        read -p "Enter first file: " file1
+    fi
+
+    if [[ -z "$file2" ]]; then
+        read -p "Enter second file: " file2
+    fi
+
+    if [[ -z "$output_file" ]]; then
+        read -p "Enter output file: " output_file
+    fi
+
     # Check if both input files exist
     if [[ -f "$file1" && -f "$file2" ]]; then
         # Check if the output file exists
@@ -36,13 +47,13 @@ concatenate () {
             echo "Output file does not exist. It will be created."
         fi
 
-        # Check if a regex is provided, and filter using the regex
+        # Check if a regex is provided and filter the files using the regex
         if [[ -n "$regex" ]]; then
             echo "Filtering lines matching regex: $regex"
             grep -E "$regex" "$file1" > "$output_file"
             grep -E "$regex" "$file2" >> "$output_file"
         else
-            # If no regex is provided, concatenate files normally
+            # If no regex, concatenate files directly
             cat "$file1" "$file2" > "$output_file"
         fi
         
@@ -53,7 +64,7 @@ concatenate () {
 }
 
 # Process options
-while getopts ":hcr:" opt; do 
+while getopts ":hc:r:" opt; do 
     case $opt in
         # Option to display help
         h)
@@ -62,20 +73,24 @@ while getopts ":hcr:" opt; do
         
         # Option to concatenate files
         c)
+            file1="$2"
+            file2="$3"
+            output_file="$4"
+            shift 3  # Shift the arguments so they don't conflict with the next option
             ;;
         
-        # Option to provide regular expression for filtering
+        # Option for regex filter
         r)
             regex=$OPTARG
             ;;
         
-        # Invalid option handling
+        # Invalid options
         \?)
             echo "Invalid option: -$OPTARG"
             display_usage
             ;;
         
-        # Missing argument for options
+        # Missing arguments for options
         :)
             echo "Option -$OPTARG requires an argument."
             display_usage
@@ -84,19 +99,13 @@ while getopts ":hcr:" opt; do
 done
 shift $((OPTIND - 1))
 
-# postions for arguments after files
-if [[ "$#" -ge 3 ]]; then
-    file1="$1"
-    file2="$2"
-    output_file="$3"
+# Concatenate only if the -c option was used
+if [[ -n "$file1" && -n "$file2" && -n "$output_file" ]]; then
+    concatenate
 else
     echo "Error: Missing input files or output file."
-    display_usage
-    exit 1
 fi
 
-# concatenate if -c is entered
-concatenate
 
 
 

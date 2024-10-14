@@ -16,7 +16,7 @@ function display_usage () {
 if [ $# -eq 0 ]; then
     echo "Error: Missing Arguments"
     display_usage
-    exit
+    exit 1
 fi
 
 # Initialize variables
@@ -27,10 +27,18 @@ regex=""
 
 # Function to concatenate files
 concatenate () {
-    # Prompt user for input without $
+    # Prompt user for input if not provided
+    if [[ -z "$file1" ]]; then
         read -p "Enter first file: " file1
+    fi
+
+    if [[ -z "$file2" ]]; then
         read -p "Enter second file: " file2
+    fi
+
+    if [[ -z "$output_file" ]]; then
         read -p "Enter output file: " output_file
+    fi
 
     # Check if both input files exist
     if [[ -f "$file1" && -f "$file2" ]]; then
@@ -39,19 +47,19 @@ concatenate () {
             echo "Output file does not exist. It will be created."
         fi
 
-        # Check if a regex is provided. Filter using regex
+        # Check if a regex is provided and filter the files using the regex
         if [[ -n "$regex" ]]; then
-            echo "Filtering lines matching: $regex"
+            echo "Filtering lines matching regex: $regex"
             grep -E "$regex" "$file1" > "$output_file"
             grep -E "$regex" "$file2" >> "$output_file"
         else
-            # If no pattern
+            # If no regex, concatenate files directly
             cat "$file1" "$file2" > "$output_file"
         fi
         
         echo "Concatenated file has been created: $output_file"
     else
-        echo "One or both of the input files do not exist, try again."
+        echo "One or both of the input files do not exist. Please try again."
     fi
 }
 
@@ -65,12 +73,17 @@ while getopts ":hc:r:" opt; do
         
         # Option to concatenate files
         c)
-            concatenate
+            file1="$2"
+            file2="$3"
+            output_file="$4"
+            shift 3  # Shift the arguments so they don't conflict with the next option
             ;;
         
-        r) 
-        regex=$OPTARG
-        ;;
+        # Option to use regular expression for filtering
+        r)
+            regex=$OPTARG
+            ;;
+        
         # Invalid options
         \?)
             echo "Invalid option: -$OPTARG"
@@ -86,8 +99,10 @@ while getopts ":hc:r:" opt; do
 done
 shift $((OPTIND - 1))
 
-# Check if files are provided
-if [[ -z "$file1" || -z "$file2" || -z "$output_file" ]]; then
+# Call the concatenate function only if the `-c` option was used
+if [[ -n "$file1" && -n "$file2" && -n "$output_file" ]]; then
+    concatenate
+else
     echo "Error: Missing input files or output file."
 fi
 
