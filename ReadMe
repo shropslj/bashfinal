@@ -1,0 +1,7 @@
+This script is a Text File Concatenator. It will concatenate multiple text
+files into one output file. 
+
+This is a useful script because it is very versatile and straight forward.
+A use case for this would be adding the bibliography onto the end of an essay.
+Since I don't like cluttering my workspace I create a separate file for my
+annotated bibliography. I could run this script when finished to combine the two.
