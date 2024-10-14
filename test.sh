@@ -28,11 +28,12 @@ read -p "Enter first file: " file1
 read -p "Enter second file: " file2
 read -p "Enter a name for concatenated file: "
 
-if [[ -f $file1 && $file2 ]] then
+if [[ -f $file1 && -f $file2 ]]; then
     cat "$file1" "$file2" > "$output_file"
     echo "Concatenated file has been created"
 else
 echo "One or both files do not exist, try again."
+fi
 }
 
 

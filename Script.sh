@@ -1,62 +1,76 @@
 #!/bin/bash
 
-#Text File Concatenator
-#This script should concatenate multiple text files into a single output file
-
+# Function to display help/usage information
 function display_usage () {
-echo "Usage: $0 [-c file1 file2... -o output_file] [-p pattern] [-h]"
-echo "Files 1 and 2 must already exist"
-echo ""
-echo "Options: "
-echo "-h                 display help information"
-echo "-c file1 file2     begin concatenating files"
-echo ""
-echo "-o output_file     specify the output file"
-echo ""
-exit 1
+    echo "Usage: enter -c for concatenator; file1 file2 output_file"
+    echo ""
+    echo "Options:"
+    echo "-c file1 file2 output_file    to concatenate"
+    echo "-h                 display help information"
+    echo ""
+    exit 1
 }
 
-#If no arguments
+# If no arguments
 if [ $# -eq 0 ]; then
-    Echo "Error: Missing Arguments"
+    echo "Error: Missing Arguments"
     display_usage
     exit
 fi
 
-#intialize variables
-files =()
+# Initialize variables
 file1=""
 file2=""
-outputfile=""
+output_file=""
 
-#parse options with getopt
-while getopts ":h:c"; do 
+# Function to concatenate files
+concatenate () {
+    # Prompt user for input without $
+    read -p "Enter first file: " file1
+    read -p "Enter second file: " file2
+    read -p "Enter a name for concatenated file: " output_file
+
+    # Check if both files exist
+    if [[ -f "$file1" && -f "$file2" ]]; then
+        # Concatenate the files into the output file
+        cat "$file1" "$file2" > "$output_file"
+        echo "Concatenated file has been created: $output_file"
+    else
+        echo "One or both of the files do not exist. Please try again."
+    fi
+}
+
+# Process options
+while getopts ":hc" opt; do 
     case $opt in
-
-    #option h to display help
-
-    h) 
-    display_usage
-    ;;
-
-    #option to specify output file
-
-    o)
-        output_file=$OPTARG
-        ;;
-
-    #invalid options
-    \?)
-         echo "Invalid option: -$OPTARG"
+        # Option to display help
+        h)
             display_usage
             ;;
-        # no argument
-    : ) echo "Option -$OPTARG requires an argument."
-
-            # display usage and exit
+        
+        # Option to concatenate files
+        c)
+            concatenate
+            ;;
+        
+        # Invalid options
+        \?)
+            echo "Invalid option: -$OPTARG"
             display_usage
-          ;;
-
+            ;;
+        
+        # Missing arguments for options
+        :)
+            echo "Option -$OPTARG requires an argument."
+            display_usage
+            ;;
     esac
 done
+shift $((OPTIND - 1))
+
+# Check if files are provided
+if [[ -z "$file1" || -z "$file2" || -z "$output_file" ]]; then
+    echo "Error: Missing input files or output file."
+fi
+
 
