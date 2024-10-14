@@ -3,8 +3,8 @@
 function display_usage () {
 echo "Usage: enter -c for concatenator; file1 file2 output_file"
 echo ""
-echo "-c file1 file2 output_file    to concatenate"
 echo "Options: "
+echo "-c file1 file2 output_file    to concatenate"
 echo "-h                 display help information"
 echo ""
 exit 1
@@ -12,7 +12,7 @@ exit 1
 
 #If no arguments
 if [ $# -eq 0 ]; then
-    Echo "Error: Missing Arguments"
+    echo "Error: Missing Arguments"
     display_usage
     exit
 fi
@@ -22,11 +22,24 @@ file1=""
 file2=""
 output_file=""
 
-while getopts ":h:c"; do 
+
+concatenate (){
+read -p "Enter first file: " file1
+read -p "Enter second file: " file2
+read -p "Enter a name for concatenated file: "
+
+if [[ -f $file1 && $file2 ]] then
+    cat "$file1" "$file2" > "$output_file"
+    echo "Concatenated file has been created"
+else
+echo "One or both files do not exist, try again."
+}
+
+
+while getopts ":hc" opt; do 
     case $opt in
 
     #option h to display help
-
     h) 
     display_usage
     ;;
@@ -40,7 +53,7 @@ while getopts ":h:c"; do
             display_usage
             ;;
         # no argument
-    : ) echo "Option -$OPTARG requires an argument."
+    :) echo "Option -$OPTARG requires an argument."
 
             # display usage and exit
             display_usage
@@ -48,21 +61,11 @@ while getopts ":h:c"; do
 
     esac
 done
+shift $((OPTIND -1))
 
-if [ "$file1" = "" ]
-then 
-    echo "no input file"
+#checking if files have been provided
+
+if [[-z "$file" || -z "$file2" || "$output_file" ]]; then
+    echo "Error: Missing input files or output file name."
 fi
 
-concatenate (){
-read -p "Enter first file: " $file1
-read -p "Enter second file: " $file2
-read -p "Enter a name for concatenated file: "
-
-if [ -f $file1 && $file2 ]
-then
-    cat $file1 $file2 >> $output_file
-    echo "Concatenated file has been created"
-else
-echo "File does not exist, try again."
-}
