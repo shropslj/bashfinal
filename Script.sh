@@ -30,12 +30,14 @@ concatenate () {
     read -p "Enter second file: " file2
     read -p "Enter output file: " output_file
 
-if [ -!e "$output_file" ]; then
-    touch $output_file
-fi
-
     # Check if both files exist
     if [[ -f "$file1" && -f "$file2" ]]; then
+
+    #notifying user that output file doesn't exist
+        if [ !-f "$output_file" ]; then
+        echo "This output file does not exist. It is being created."
+        fi
+
         # Concatenate the files into the output file
         cat "$file1" "$file2" > "$output_file"
         echo "Concatenated file has been created: $output_file"
