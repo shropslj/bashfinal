@@ -5,9 +5,9 @@ function display_usage () {
     echo "Usage: enter -c for concatenator; file1 file2 output_file"
     echo ""
     echo "Options:"
-    echo "-c file1 file2 output_file    to concatenate"
-    echo "-h                 display help information"
-    echo "-r                 enter a regular expression to filter for"
+    echo "-c file1.txt file2.txt output_file    to concatenate. Remember to include the file extension"
+    echo "-r 'regex'                           enter a regular expression to filter for"
+    echo "-h                                   display help information"
     echo ""
     exit 1
 }
@@ -28,7 +28,7 @@ regex=""
 # Function to concatenate files
 concatenate () {
     # Prompt user for input without $
-    read -p "Enter first file: " file1
+    read -p "Enter first file: " file1 
     read -p "Enter second file: " file2
     read -p "Enter output file: " output_file
 
@@ -56,7 +56,7 @@ concatenate () {
 }
 
 # Process options
-while getopts ":hc" opt; do 
+while getopts ":hc:r:" opt; do 
     case $opt in
         # Option to display help
         h)
