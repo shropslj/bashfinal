@@ -6,4 +6,4 @@ A use case for this would be adding the bibliography onto the end of an essay.
 Since I don't like cluttering my workspace I create a separate file for my
 annotated bibliography. I could run this script when finished to combine the two.
 
-The regular expression option (-r) can be used to filter any content of any of the concatenated text files. Inlcluded in the repository are the example files I used. I used the regular expression "[0-9]{4}" to filter all of the dates in the bibliography.
+The regular expression option (-r) can be used to filter any content of any of the concatenated text files. Inlcluded in the repository are the example/test files I used. 
