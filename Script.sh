@@ -7,6 +7,7 @@ function display_usage () {
     echo "Options:"
     echo "-c file1 file2 output_file    to concatenate"
     echo "-h                 display help information"
+    echo "-r                 enter a regular expression to filter for"
     echo ""
     exit 1
 }
@@ -22,6 +23,7 @@ fi
 file1=""
 file2=""
 output_file=""
+regex=""
 
 # Function to concatenate files
 concatenate () {
@@ -30,19 +32,26 @@ concatenate () {
     read -p "Enter second file: " file2
     read -p "Enter output file: " output_file
 
-    # Check if both files exist
+    # Check if both input files exist
     if [[ -f "$file1" && -f "$file2" ]]; then
-
-    #notifying user that output file doesn't exist
-        if [ !-f "$output_file" ]; then
-        echo "This output file does not exist. It is being created."
+        # Check if the output file exists
+        if [[ ! -f "$output_file" ]]; then
+            echo "Output file does not exist. It will be created."
         fi
 
-        # Concatenate the files into the output file
-        cat "$file1" "$file2" > "$output_file"
+        # Check if a regex is provided. Filter using regex
+        if [[ -n "$regex" ]]; then
+            echo "Filtering lines matching: $regex"
+            grep -E "$regex" "$file1" > "$output_file"
+            grep -E "$regex" "$file2" >> "$output_file"
+        else
+            # If no pattern
+            cat "$file1" "$file2" > "$output_file"
+        fi
+        
         echo "Concatenated file has been created: $output_file"
     else
-        echo "One or both of the files do not exist. Please try again."
+        echo "One or both of the input files do not exist, try again."
     fi
 }
 
@@ -59,6 +68,9 @@ while getopts ":hc" opt; do
             concatenate
             ;;
         
+        r) 
+        regex=$OPTARG
+        ;;
         # Invalid options
         \?)
             echo "Invalid option: -$OPTARG"
